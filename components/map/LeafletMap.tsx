@@ -1,13 +1,15 @@
 "use client";
-
 import { useEffect } from "react";
 import useLocation, { type Position } from "@/hooks/useLocationHook";
-import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
+import { MapContainer, Popup, TileLayer, useMap } from "react-leaflet";
+import { Marker } from "react-leaflet/Marker";
+import "../ui/Marker";
 
 const fallbackCenter: [number, number] = [59.3293, 18.0686];
 
 function MapViewSync({ position }: { position: Position | null }) {
   const map = useMap();
+  console.log("Usemap ", map);
 
   useEffect(() => {
     if (position === null) {
@@ -35,11 +37,6 @@ function LocationMarker({ position }: { position: Position | null }) {
 export default function LeafletMap() {
   const { position, error, loading, requestLocation } = useLocation();
 
-  //Todo move this call behind a "Locate me" button.
-  useEffect(() => {
-    requestLocation();
-  }, [requestLocation]);
-
   return (
     <div className="relative h-screen w-full">
       <MapContainer
@@ -55,6 +52,12 @@ export default function LeafletMap() {
         <MapViewSync position={position} />
         <LocationMarker position={position} />
       </MapContainer>
+      <button
+        className="h-10 w-20 absolute bottom-4 right-4 z-[1000] rounded bg-blue-500 text-white shadow"
+        onClick={requestLocation}
+      >
+        Locate me
+      </button>
 
       {(loading || error) && (
         <div className="absolute left-4 top-4 z-[1000] rounded bg-white px-3 py-2 text-sm shadow">
