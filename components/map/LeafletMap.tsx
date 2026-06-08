@@ -28,7 +28,7 @@ function LocationMarker({ position }: { position: Position | null }) {
   }
 
   return (
-    <Marker position={[position.lat, position.lng]}>
+    <Marker draggable position={[position.lat, position.lng]}>
       <Popup>You are here</Popup>
     </Marker>
   );
@@ -53,14 +53,14 @@ export default function LeafletMap() {
         <LocationMarker position={position} />
       </MapContainer>
       <button
-        className="h-10 w-20 absolute bottom-4 right-4 z-[1000] rounded bg-blue-500 text-white shadow"
+        className="h-10 w-20 absolute bottom-4 right-4 z-1000 rounded bg-blue-500 text-white shadow"
         onClick={requestLocation}
       >
         Locate me
       </button>
 
       {(loading || error) && (
-        <div className="absolute left-4 top-4 z-[1000] rounded bg-white px-3 py-2 text-sm shadow">
+        <div className="absolute left-4 top-4 z-1000 rounded bg-white px-3 py-2 text-sm shadow">
           {loading ? "Finding your location..." : error}
         </div>
       )}
