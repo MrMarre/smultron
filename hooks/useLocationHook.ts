@@ -35,5 +35,9 @@ export default function useLocation() {
     );
   }, []);
 
-  return { position, error, loading, requestLocation };
+  const updatePosition = useCallback((newPosition: Position) => {
+    setPosition(newPosition);
+  }, []);
+
+  return { position, error, loading, requestLocation, updatePosition };
 }

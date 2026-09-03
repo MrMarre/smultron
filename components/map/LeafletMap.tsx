@@ -22,27 +22,45 @@ function MapViewSync({ position }: { position: Position | null }) {
   return null;
 }
 
-function LocationMarker({ position }: { position: Position | null }) {
+function LocationMarker({
+  position,
+  onPositionChange,
+}: {
+  position: Position | null;
+  onPositionChange: (position: Position) => void;
+}) {
   if (position === null) {
     return null;
   }
 
   return (
-    <Marker draggable position={[position.lat, position.lng]}>
+    <Marker
+      draggable
+      position={[position.lat, position.lng]}
+      eventHandlers={{
+        dragend(event) {
+          const marker = event.target;
+          const { lat, lng } = marker.getLatLng();
+          console.log("Marker dragged to: ", lat, lng);
+          onPositionChange({ lat, lng });
+        },
+      }}
+    >
       <Popup>You are here</Popup>
     </Marker>
   );
 }
 
 export default function LeafletMap() {
-  const { position, error, loading, requestLocation } = useLocation();
+  const { position, error, loading, requestLocation, updatePosition } =
+    useLocation();
 
   return (
     <div className="relative h-screen w-full">
       <MapContainer
         className="h-full w-full"
         center={fallbackCenter}
-        zoom={15}
+        zoom={17}
         // scrollWheelZoom={false}
       >
         <TileLayer
@@ -50,13 +68,13 @@ export default function LeafletMap() {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <MapViewSync position={position} />
-        <LocationMarker position={position} />
+        <LocationMarker position={position} onPositionChange={updatePosition} />
       </MapContainer>
       <button
         className="h-10 w-20 absolute bottom-4 right-4 z-1000 rounded bg-blue-500 text-white shadow"
         onClick={requestLocation}
       >
-        Locate me
+        {loading ? "Locating..." : "Locate me"}
       </button>
 
       {(loading || error) && (
