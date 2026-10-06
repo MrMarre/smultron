@@ -24,6 +24,7 @@
 .DS_Store
 *.pem
 TODO.md
+SCRATCH.md
 
 # debug
 npm-debug.log*

@@ -1,11 +1,20 @@
 "use client";
 import { useEffect } from "react";
 import useLocation, { type Position } from "@/hooks/useLocationHook";
-import { MapContainer, Popup, TileLayer, useMap } from "react-leaflet";
+import {
+  MapContainer,
+  Popup,
+  TileLayer,
+  useMap,
+  useMapEvents,
+} from "react-leaflet";
 import { Marker } from "react-leaflet/Marker";
 import "../ui/Marker";
-
-const fallbackCenter: [number, number] = [59.3293, 18.0686];
+//Original, Stockholm
+// const fallbackCenter: [number, number] = [59.3293, 18.0686];
+const fallbackCenter: [number, number] = [
+  57.975706336525484, 19.170970916748047,
+];
 
 function MapViewSync({ position }: { position: Position | null }) {
   const map = useMap();
@@ -44,11 +53,26 @@ function LocationMarker({
           console.log("Marker dragged to: ", lat, lng);
           onPositionChange({ lat, lng });
         },
+        //How to set up a click event on the marker to update the position? I want the user to both be able to drag the marker and click on the map to move the marker.
       }}
     >
-      <Popup>You are here</Popup>
+      <Popup>Selected location</Popup>
     </Marker>
   );
+}
+function UpdateMapPositionOnPress({
+  onPositionChange,
+}: {
+  onPositionChange: (position: Position) => void;
+}) {
+  useMapEvents({
+    contextmenu(event) {
+      const { lat, lng } = event.latlng;
+      console.log("Map clicked at: ", lat, lng);
+      onPositionChange({ lat, lng });
+    },
+  });
+  return null;
 }
 
 export default function LeafletMap() {
@@ -60,7 +84,7 @@ export default function LeafletMap() {
       <MapContainer
         className="h-full w-full"
         center={fallbackCenter}
-        zoom={17}
+        zoom={14}
         // scrollWheelZoom={false}
       >
         <TileLayer
@@ -69,6 +93,7 @@ export default function LeafletMap() {
         />
         <MapViewSync position={position} />
         <LocationMarker position={position} onPositionChange={updatePosition} />
+        <UpdateMapPositionOnPress onPositionChange={updatePosition} />
       </MapContainer>
       <button
         className="h-10 w-20 absolute bottom-4 right-4 z-1000 rounded bg-blue-500 text-white shadow"
