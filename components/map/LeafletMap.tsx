@@ -59,6 +59,16 @@ function LocationMarker({
   );
 }
 
+function FocusMarker({ request }: { request: Position | null }) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (request === null) return;
+    map.flyTo([request.lat, request.lng], map.getZoom());
+  }, [map, request]);
+  return null;
+}
+
 function UpdateMarkerPositionOnPress({
   onPositionChange,
 }: {
@@ -76,6 +86,9 @@ function UpdateMarkerPositionOnPress({
 
 export default function LeafletMap() {
   const [selectedPosition, setSelectedPosition] = useState<Position | null>(
+    null,
+  );
+  const [markerFocusRequest, setMarkerFocusRequest] = useState<Position | null>(
     null,
   );
   const { userLocation, error, loading, requestLocation } = useLocation();
@@ -97,9 +110,15 @@ export default function LeafletMap() {
           <CircleMarker
             center={[userLocation.lat, userLocation.lng]}
             radius={8}
-            pathOptions={{ color: "white", weight: 3, fillColor: "#2563eb", fillOpacity: 1 }}
+            pathOptions={{
+              color: "white",
+              weight: 3,
+              fillColor: "#2563eb",
+              fillOpacity: 1,
+            }}
           />
         )}
+        <FocusMarker request={markerFocusRequest} />
         <LocationMarker
           position={selectedPosition}
           onPositionChange={setSelectedPosition}
@@ -117,6 +136,20 @@ export default function LeafletMap() {
         <div className="absolute left-4 top-4 z-1000 rounded bg-white px-3 py-2 text-sm shadow">
           {loading ? "Finding your location..." : error}
         </div>
+      )}
+
+      {(selectedPosition || userLocation) && (
+        <button
+          className="h-10 w-25 absolute bottom-4 right-25 z-1000 rounded bg-blue-500 text-white shadow"
+          disabled={selectedPosition === null}
+          onClick={() => {
+            if (selectedPosition) {
+              setMarkerFocusRequest({ ...selectedPosition });
+            }
+          }}
+        >
+          Go to marker
+        </button>
       )}
     </div>
   );
