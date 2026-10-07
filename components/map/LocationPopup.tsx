@@ -50,8 +50,13 @@ export default function LocationPopup({
           onChange={(event) => setName(event.target.value)}
           placeholder="Location name"
           required
+          className="rounded "
         />
-        <button type="submit" disabled={saving || !name.trim()}>
+        <button
+          type="submit"
+          disabled={saving || !name.trim()}
+          className="rounded bg-blue-500 px-4 py-2 text-white disabled:opacity-70 cursor-pointer"
+        >
           {saving ? "Saving..." : "Save"}
         </button>
       </form>

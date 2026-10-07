@@ -2,8 +2,8 @@
 import { useEffect, useState } from "react";
 import useLocation, { type Position } from "@/hooks/useLocationHook";
 import {
+  CircleMarker,
   MapContainer,
-  Popup,
   TileLayer,
   useMap,
   useMapEvents,
@@ -93,6 +93,13 @@ export default function LeafletMap() {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <MapViewSync userLocation={userLocation} />
+        {userLocation !== null && (
+          <CircleMarker
+            center={[userLocation.lat, userLocation.lng]}
+            radius={8}
+            pathOptions={{ color: "white", weight: 3, fillColor: "#2563eb", fillOpacity: 1 }}
+          />
+        )}
         <LocationMarker
           position={selectedPosition}
           onPositionChange={setSelectedPosition}
