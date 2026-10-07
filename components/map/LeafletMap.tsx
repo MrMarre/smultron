@@ -10,6 +10,7 @@ import {
 } from "react-leaflet";
 import { Marker } from "react-leaflet/Marker";
 import "../ui/Marker";
+import LocationPopup from "./LocationPopup";
 
 const fallbackCenter: [number, number] = [
   57.975706336525484, 19.170970916748047,
@@ -27,17 +28,7 @@ function MapViewSync({ userLocation }: { userLocation: Position | null }) {
 
   return null;
 }
-function PopupDialog() {
-  return (
-    <Popup>
-      <div className="flex flex-col items-center justify-center gap-2">
-        <p className="text-sm text-gray-700 dark:text-gray-300">
-          Click the map to choose a location
-        </p>
-      </div>
-    </Popup>
-  );
-}
+
 function LocationMarker({
   position,
   onPositionChange,
@@ -62,7 +53,8 @@ function LocationMarker({
         },
       }}
     >
-      <PopupDialog />
+      {/* <PopupDialog /> */}
+      <LocationPopup position={position} onSave={() => Promise.resolve()} />
     </Marker>
   );
 }
