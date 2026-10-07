@@ -6,7 +6,7 @@ export type Position = {
 };
 
 export default function useLocation() {
-  const [position, setPosition] = useState<Position | null>(null);
+  const [userLocation, setUserLocation] = useState<Position | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -22,7 +22,7 @@ export default function useLocation() {
 
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        setPosition({
+        setUserLocation({
           lat: pos.coords.latitude,
           lng: pos.coords.longitude,
         });
@@ -35,9 +35,5 @@ export default function useLocation() {
     );
   }, []);
 
-  const updatePosition = useCallback((newPosition: Position) => {
-    setPosition(newPosition);
-  }, []);
-
-  return { position, error, loading, requestLocation, updatePosition };
+  return { userLocation, error, loading, requestLocation };
 }

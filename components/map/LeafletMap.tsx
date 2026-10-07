@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useLocation, { type Position } from "@/hooks/useLocationHook";
 import {
   MapContainer,
@@ -10,27 +10,34 @@ import {
 } from "react-leaflet";
 import { Marker } from "react-leaflet/Marker";
 import "../ui/Marker";
-//Original, Stockholm
-// const fallbackCenter: [number, number] = [59.3293, 18.0686];
+
 const fallbackCenter: [number, number] = [
   57.975706336525484, 19.170970916748047,
 ];
 
-function MapViewSync({ position }: { position: Position | null }) {
+function MapViewSync({ userLocation }: { userLocation: Position | null }) {
   const map = useMap();
   console.log("Usemap ", map);
 
   useEffect(() => {
-    if (position === null) {
-      return;
-    }
+    if (userLocation === null) return;
 
-    map.flyTo([position.lat, position.lng], map.getZoom());
-  }, [map, position]);
+    map.flyTo([userLocation.lat, userLocation.lng], map.getZoom());
+  }, [map, userLocation]);
 
   return null;
 }
-
+function PopupDialog() {
+  return (
+    <Popup>
+      <div className="flex flex-col items-center justify-center gap-2">
+        <p className="text-sm text-gray-700 dark:text-gray-300">
+          Click the map to choose a location
+        </p>
+      </div>
+    </Popup>
+  );
+}
 function LocationMarker({
   position,
   onPositionChange,
@@ -53,20 +60,20 @@ function LocationMarker({
           console.log("Marker dragged to: ", lat, lng);
           onPositionChange({ lat, lng });
         },
-        //How to set up a click event on the marker to update the position? I want the user to both be able to drag the marker and click on the map to move the marker.
       }}
     >
-      <Popup>Selected location</Popup>
+      <PopupDialog />
     </Marker>
   );
 }
-function UpdateMapPositionOnPress({
+
+function UpdateMarkerPositionOnPress({
   onPositionChange,
 }: {
   onPositionChange: (position: Position) => void;
 }) {
   useMapEvents({
-    contextmenu(event) {
+    click(event) {
       const { lat, lng } = event.latlng;
       console.log("Map clicked at: ", lat, lng);
       onPositionChange({ lat, lng });
@@ -76,8 +83,10 @@ function UpdateMapPositionOnPress({
 }
 
 export default function LeafletMap() {
-  const { position, error, loading, requestLocation, updatePosition } =
-    useLocation();
+  const [selectedPosition, setSelectedPosition] = useState<Position | null>(
+    null,
+  );
+  const { userLocation, error, loading, requestLocation } = useLocation();
 
   return (
     <div className="relative h-screen w-full">
@@ -91,9 +100,12 @@ export default function LeafletMap() {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <MapViewSync position={position} />
-        <LocationMarker position={position} onPositionChange={updatePosition} />
-        <UpdateMapPositionOnPress onPositionChange={updatePosition} />
+        <MapViewSync userLocation={userLocation} />
+        <LocationMarker
+          position={selectedPosition}
+          onPositionChange={setSelectedPosition}
+        />
+        <UpdateMarkerPositionOnPress onPositionChange={setSelectedPosition} />
       </MapContainer>
       <button
         className="h-10 w-20 absolute bottom-4 right-4 z-1000 rounded bg-blue-500 text-white shadow"
