@@ -18,7 +18,6 @@ const fallbackCenter: [number, number] = [
 
 function MapViewSync({ userLocation }: { userLocation: Position | null }) {
   const map = useMap();
-  console.log("Usemap ", map);
 
   useEffect(() => {
     if (userLocation === null) return;
@@ -48,12 +47,10 @@ function LocationMarker({
         dragend(event) {
           const marker = event.target;
           const { lat, lng } = marker.getLatLng();
-          console.log("Marker dragged to: ", lat, lng);
           onPositionChange({ lat, lng });
         },
       }}
     >
-      {/* <PopupDialog /> */}
       <LocationPopup position={position} onSave={() => Promise.resolve()} />
     </Marker>
   );
@@ -77,7 +74,6 @@ function UpdateMarkerPositionOnPress({
   useMapEvents({
     click(event) {
       const { lat, lng } = event.latlng;
-      console.log("Map clicked at: ", lat, lng);
       onPositionChange({ lat, lng });
     },
   });

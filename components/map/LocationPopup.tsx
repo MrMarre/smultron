@@ -26,7 +26,6 @@ export default function LocationPopup({
     const trimmedName = name.trim();
 
     if (!trimmedName) return;
-    console.log("Saving location:", { name: trimmedName, position });
     setSaving(true);
     try {
       await onSave({ name: trimmedName, position });
