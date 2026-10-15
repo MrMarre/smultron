@@ -18,10 +18,8 @@ const fallbackCenter: [number, number] = [
 
 function MapViewSync({ userLocation }: { userLocation: Position | null }) {
   const map = useMap();
-
   useEffect(() => {
     if (userLocation === null) return;
-
     map.flyTo([userLocation.lat, userLocation.lng], map.getZoom());
   }, [map, userLocation]);
 
