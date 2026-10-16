@@ -19,7 +19,7 @@ export default function LocationPopup({
   position,
   onSave,
 }: LocationPopupProps) {
-  const [saving, setSaving] = useState(false);
+  const [saving, setSaving] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   const [name, setName] = useState<string>("");
@@ -52,7 +52,7 @@ export default function LocationPopup({
       console.log("Location saved:", {
         name: trimmedName,
         position,
-        description,
+        description: trimmedDescription || undefined,
       });
       setName("");
       setDescription("");
